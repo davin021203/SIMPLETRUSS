@@ -10,6 +10,7 @@ function register() {
     } else {
         document.getElementById("regMessage").innerText = "Please fill both fields.";
     }
+    console.log(username, password, email)
 
     fetch("/api/register/", {
         method: "POST",
@@ -17,9 +18,9 @@ function register() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ 
-            username: username, 
-            password: password, 
-            email: email})
+            'username': username, 
+            'password': password, 
+            'email': email})
     }).then(result => {
         if (result.ok) {
             window.location.href = "/";
