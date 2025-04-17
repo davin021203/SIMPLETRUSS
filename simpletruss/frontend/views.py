@@ -49,3 +49,9 @@ def edit_task(request, task_id):
         form = TaskForm(instance=task)
 
     return render(request, 'frontend/edittask.html', {'form': form, 'task_id': task_id})
+
+def login(request):
+    return render(request, 'frontend/login.html')
+
+def register(request):
+    return render(request, 'frontend/register.html')

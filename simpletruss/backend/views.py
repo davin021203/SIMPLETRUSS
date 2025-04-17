@@ -1,9 +1,12 @@
 from django.shortcuts import render
+import json
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view
 from .models import Task
 from rest_framework.views import APIView 
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
@@ -33,11 +36,11 @@ class login_view(APIView):
                 'message': 'Invalid username and/or password'
             }, status=409)
             '''
-            
+@csrf_exempt            
 def login(request):
     if request.method == 'POST':
         # Handle login logic here  
-        data = request.data
+        data = json.loads(request.body)
         username = data.get('username')
         password = data.get('password')
         if not username or not password:   
@@ -47,12 +50,9 @@ def login(request):
             }, status=400)
         # Check if user exists and authenticate 
         user = authenticate(username=username, password=password)
-        
         if user is not None:
             login(request, user)
-            return JsonResponse({
-                'username': user.username
-            }, status=200)
+            return HttpResponseRedirect(reverse('frontend:task_list'))
         else:
             return JsonResponse({
                 'error': True,
@@ -60,8 +60,7 @@ def login(request):
             }, status=409)
         
     else:
-        return JsonResponse({"message": "Request method not allowed"}, status=405)
-    
+        return HttpResponseRedirect(reverse('frontend:task_list'))
 def register(request):
     if request.method == 'POST':
         # Handle registration logic here
