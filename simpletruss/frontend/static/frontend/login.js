@@ -10,4 +10,12 @@ function login() {
     } else {
         document.getElementById("loginMessage").innerText = "Invalid credentials.";
     }
+
+    fetch("/api/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+    })
 }

@@ -7,17 +7,21 @@ from django.shortcuts import get_object_or_404
 from backend.utils import get_user_tasks
 from django.contrib import messages
 import requests
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
     return render(request, 'frontend/index.html')
 
+@login_required(login_url='/login/')
 def add_new_task_page(request):
     return render(request, 'frontend/addnewtask.html')
 
+@login_required(login_url='/login/')
 def task_list(request):
     return render(request, 'frontend/task_list.html')
 
+@login_required(login_url='/login/')
 def get_tasks(request):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
@@ -28,6 +32,7 @@ def get_tasks(request):
 
     return JsonResponse(serialized, safe=False)
 
+@login_required(login_url='/login/')
 def add_new_task_page(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
@@ -52,8 +57,7 @@ def add_new_task_page(request):
 
     return render(request, 'frontend/addnewtask.html', {'form': form})
 
-
-
+@login_required(login_url='/login/')
 def edit_task(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
 

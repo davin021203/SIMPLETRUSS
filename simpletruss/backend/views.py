@@ -6,6 +6,8 @@ from .models import Task
 from rest_framework.views import APIView 
 from .utils import get_user_tasks
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -52,10 +54,20 @@ def login(request):
     else:
         return JsonResponse({"message": "Request method not allowed"}, status=405)
     
+@csrf_exempt
 def register(request):
     if request.method == 'POST':
         # Handle registration logic here
-        return JsonResponse({"message": "Registration successful!"})
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        # Create a new user
+        try:
+            user = User.objects.create_user(username=username, password=password, email=email)
+            user.save()
+            return HttpResponseRedirect('/')
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
     else:
         return JsonResponse({"message": "Registration page"})
 
@@ -63,6 +75,7 @@ def logout(request):
     # Handle logout logic here
     logout(request)
     return HttpResponseRedirect('/')    
+
 
 def get_task(request, taskname=None):
     if not request.user.is_authenticated:
@@ -78,6 +91,7 @@ def get_task(request, taskname=None):
     return JsonResponse(serialized if not taskname else serialized[0], safe=not taskname)
     
 @csrf_exempt
+
 def create_task(request):
     if request.method == 'POST':
         name = request.POST.get('name')
@@ -100,6 +114,7 @@ def create_task(request):
     else:
         return JsonResponse({"message": "Method not allowed"}, status=405)
     
+
 def delete_task(request, task_id):
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
