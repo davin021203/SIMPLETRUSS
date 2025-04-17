@@ -34,7 +34,11 @@ end
 deactivate nondestructive
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 set -gx VIRTUAL_ENV "/Users/izzywawa/Downloads/SimpleTruss/SIMPLETRUSS/venv"
+=======
+set -gx VIRTUAL_ENV "/Users/izzywawa/Downloads/ST2/venv"
+>>>>>>> eb27ee5 (add django project)
 =======
 set -gx VIRTUAL_ENV "/Users/izzywawa/Downloads/ST2/venv"
 >>>>>>> eb27ee5 (add django project)

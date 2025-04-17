@@ -10,7 +10,11 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 deactivate nondestructive
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 setenv VIRTUAL_ENV "/Users/izzywawa/Downloads/SimpleTruss/SIMPLETRUSS/venv"
+=======
+setenv VIRTUAL_ENV "/Users/izzywawa/Downloads/ST2/venv"
+>>>>>>> eb27ee5 (add django project)
 =======
 setenv VIRTUAL_ENV "/Users/izzywawa/Downloads/ST2/venv"
 >>>>>>> eb27ee5 (add django project)

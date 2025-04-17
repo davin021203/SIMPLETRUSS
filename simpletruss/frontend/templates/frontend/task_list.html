@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        
+        
+    :root {
+            --primary-color: #1e3a8a;
+            --primary-light: #3a69d8;
+            --primary-dark: #152c6c;
+            --secondary-color: #e3f2fd;
+            --accent-color: #4CAF50;
+            --accent-hover: #45a049;
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --text-muted: #6c757d;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --sidebar-width: 250px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f8ff;
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--text-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .container {
+            padding: 20px;
+            flex: 1;
+            transition: var(--transition);
+           
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 15px;
+            text-decoration: none;
+            gap: 8px;
+        }
+
+        .search-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .search-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .search-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 15px;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        
+
+        /* Table Styles */
+        .table-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .table-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .records-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 10px;
+        }
+
+        .records-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .records-select {
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .records-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .table-content {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead tr {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #eee;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        
+        tbody tr:hover {
+            background-color: #f9fbff;
+        }
+    </style>
+</head>
+<body>
+
+  
+  <!-- Main Content -->
+  <div class="container">
+      <!-- Header -->
+      <div class="dashboard-header">
+          <div class="header-title">
+              <h1>Task Managment</h1>
+          </div>
+          
+          <div class="header-actions">
+          
+              <a href="{% url 'next_page' %}">
+                <button class="btn btn-success" type="button"><i class="fas fa-plus"></i> Add Task</button>
+              </a>
+
+          </div>
+      </div>
+      
+      <!-- Search Section -->
+      <div class="search-card">
+          <div class="search-container">
+              <div class="search-group">
+                  <label class="search-label" for="taskIDFilter">task ID</label>
+                  <input type="text" id="taskIDFilter" class="search-input" placeholder="Enter task ID">
+              </div>
+              
+              <div class="search-group">
+                  <label class="search-label" for="taskNameFilter">task Name</label>
+                  <input type="text" id="taskNameFilter" class="search-input" placeholder="Enter task Name">
+              </div>
+              
+              <div class="search-group" style="display: flex; align-items: flex-end;">
+                  <button class="btn btn-primary" style="width: 100%; margin-top: 24px;" onclick="fetchtasks()">
+                      <i class="fas fa-search"></i> Search
+                  </button>
+              </div>
+          </div>
+
+          <div>
+                <div class="records-selector">
+                    <label for="sortOrder" class="records-label">Sort Order:</label>
+                    <select id="sortOrder" class="records-select" onchange="fetchtasks()">
+                      <option value="asc">Ascending</option>
+                      <option value="desc">Descending</option>
+                    </select>
+                  </div>
+
+          </div>
+      </div>
+      
+      <!-- Table Section -->
+      <div class="table-container">
+          <div class="table-header">
+              <h3>task List</h3>
+              <div class="table-actions">
+                  <button class="btn btn-sm btn-primary" onclick="fetchtasks()">
+                      <i class="fas fa-sync-alt"></i> Refresh
+                  </button>
+              </div>
+          </div>
+          
+          <div class="table-content">
+              <table>
+                  <thead>
+                      <tr>
+                          <th>Task ID</th>
+                          <th>Task Name</th>
+                          <th>Task Description</th>
+                          <th>Task Priority</th>
+                          <th>Due Date</th>
+                          <th>Action</th>
+                  </thead>
+                  <tbody id="taskTable"></tbody>
+              </table>
+          </div>
+          
+      </div>
+  </div>
+  <script>
+   function fetchtasks() {
+  const sortOrder = document.getElementById("sortOrder").value;
+
+  fetch(`/get-tasks/?order=${sortOrder}`)
+    .then(response => response.json())
+    .then(data => {
+      const tableBody = document.getElementById("taskTable");
+      tableBody.innerHTML = "";
+
+      data.forEach(task => {
+        const row = `
+          <tr>
+            <td>${task.id}</td>
+            <td>${task.name}</td>
+            <td>${task.desc}</td>
+            <td>${task.priority}</td>
+            <td>${task.due}</td>
+            <td>
+                <button class="btn btn-primary" onclick="window.location.href='/edit-task/${task.id}/'">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    })
+    .catch(error => console.error("Error fetching tasks:", error));
+}
+
+    // Call fetch on page load
+    fetchtasks();
+  </script>
+  
+</body>

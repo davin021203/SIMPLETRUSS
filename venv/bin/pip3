@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 #!/Users/izzywawa/Downloads/SimpleTruss/SIMPLETRUSS/venv/bin/python3.12
+=======
+#!/Users/izzywawa/Downloads/ST2/venv/bin/python3.12
+>>>>>>> eb27ee5 (add django project)
 =======
 #!/Users/izzywawa/Downloads/ST2/venv/bin/python3.12
 >>>>>>> eb27ee5 (add django project)
