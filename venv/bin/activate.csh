@@ -9,7 +9,11 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
+<<<<<<< HEAD
 setenv VIRTUAL_ENV "/Users/izzywawa/Downloads/SimpleTruss/SIMPLETRUSS/venv"
+=======
+setenv VIRTUAL_ENV "/Users/izzywawa/Downloads/ST2/venv"
+>>>>>>> eb27ee5 (add django project)
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

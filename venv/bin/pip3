@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #!/Users/izzywawa/Downloads/SimpleTruss/SIMPLETRUSS/venv/bin/python3.12
+=======
+#!/Users/izzywawa/Downloads/ST2/venv/bin/python3.12
+>>>>>>> eb27ee5 (add django project)
 # -*- coding: utf-8 -*-
 import re
 import sys
