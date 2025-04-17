@@ -57,6 +57,7 @@ def login(request):
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
+        '''
         # Handle registration logic here
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -69,8 +70,11 @@ def register(request):
             return HttpResponseRedirect('/')
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
+            '''
+        print(request.POST)
+        return JsonResponse(request.POST, status=400)
     else:
-        return JsonResponse({"message": "Registration page"})
+        return HttpResponseRedirect('/register/')
 
 def logout(request):
     # Handle logout logic here
