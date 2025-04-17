@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>Register</title>
-    <link rel="stylesheet" href="style.css">
+    <link  rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
 </head>
 <body>
     <div class="container">
@@ -16,6 +17,6 @@
         <p id="regMessage"></p>
         <p>Already have an account? <a href="login.html"><b>Login</b></a></p>
     </div>
-    <script src="register.js"></script>
+    <script src="{% static 'frontend/register.js' %}"></script>
 </body>
 </html>

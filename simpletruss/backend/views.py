@@ -1,12 +1,12 @@
 from django.shortcuts import render
-import json
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.decorators import api_view
 from .models import Task
 from rest_framework.views import APIView 
+from .utils import get_user_tasks
 from django.views.decorators.csrf import csrf_exempt
-from django.urls import reverse
+
 
 # Create your views here.
 def index(request):
@@ -15,11 +15,6 @@ def index(request):
 class login_view(APIView):
     def post(self, request):
         # Handle login logic here
-        return JsonResponse({"message": "Login successful!"})
-    def get(self, request):
-        # Handle GET request for login
-        return JsonResponse({"message": "GET request for login"})
-        '''
         username = request.data.get('username')
         password = request.data.get('password')
         
@@ -35,32 +30,28 @@ class login_view(APIView):
                 'error': True,
                 'message': 'Invalid username and/or password'
             }, status=409)
-            '''
-@csrf_exempt            
+            
 def login(request):
     if request.method == 'POST':
         # Handle login logic here  
-        data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
-        if not username or not password:   
-            return JsonResponse({
-                'error': True,
-                'message': 'Username and password are required'
-            }, status=400)
-        # Check if user exists and authenticate 
+        username = 'admin'
+        password = '1234'
+        
         user = authenticate(username=username, password=password)
+        
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse('frontend:task_list'))
+            return JsonResponse({
+                'username': user.username
+            }, status=200)
         else:
             return JsonResponse({
                 'error': True,
                 'message': 'Invalid username and/or password'
             }, status=409)
-        
     else:
-        return HttpResponseRedirect(reverse('frontend:task_list'))
+        return JsonResponse({"message": "Request method not allowed"}, status=405)
+    
 def register(request):
     if request.method == 'POST':
         # Handle registration logic here
@@ -74,34 +65,48 @@ def logout(request):
     return HttpResponseRedirect('/')    
 
 def get_task(request, taskname=None):
-    # Handle getting a task by ID
-    if request.user.is_authenticated:
-        sort = request.GET.get('sort', None)
-        if taskname:
-            try:
-                task = Task.objects.get(name=taskname, user=request.user)
-                return JsonResponse(task.serialize(), status=200)
-            except Task.DoesNotExist:
-                return JsonResponse({"error": "Task not found"}, status=404)
-            
-        tasks = Task.objects.filter(user=request.user).order_by('-created_at')
-        if sort == 'asc':
-            tasks = tasks.order_by('-priority')
-        elif sort == 'desc':
-            tasks = tasks.order_by('priority')
-            
-        serialized_tasks = [task.serialize() for task in tasks]
-        return JsonResponse(serialized_tasks, safe=False)
-    else:
+    if not request.user.is_authenticated:
         return JsonResponse({"error": "User not authenticated"}, status=401)
+
+    sort = request.GET.get('sort', None)
+    tasks = get_user_tasks(request.user, taskname, sort)
+
+    if taskname and not tasks:
+        return JsonResponse({"error": "Task not found"}, status=404)
+
+    serialized = [task.serialize() for task in tasks]
+    return JsonResponse(serialized if not taskname else serialized[0], safe=not taskname)
     
-    
+@csrf_exempt
 def create_task(request):
     if request.method == 'POST':
-        # Handle creating a task
-        data = request.POST
-        
-        return JsonResponse({"message": "Task created successfully!"})
+        name = request.POST.get('name')
+        desc = request.POST.get('desc')
+        priority = request.POST.get('priority')
+        due_date = request.POST.get('due_date')
+        user = request.user
+
+        if not user.is_authenticated:
+            return JsonResponse({"error": "User not authenticated"}, status=401)
+
+        task = Task.objects.create(
+            name=name,
+            description=desc,
+            priority=priority,
+            due_date=due_date,
+            user=user
+        )
+        return JsonResponse({"message": "Task created successfully!"}, status=201)
     else:
         return JsonResponse({"message": "Method not allowed"}, status=405)
     
+def delete_task(request, task_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User not authenticated"}, status=401)
+
+    try:
+        task = Task.objects.get(id=task_id, user=request.user)
+        task.delete()
+        return JsonResponse({"message": "Task deleted successfully!"}, status=200)
+    except Task.DoesNotExist:
+        return JsonResponse({"error": "Task not found"}, status=404)

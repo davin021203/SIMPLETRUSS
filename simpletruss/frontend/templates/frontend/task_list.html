@@ -229,7 +229,7 @@
           
           <div class="header-actions">
           
-              <a href="{% url 'next_page' %}">
+              <a href="{% url 'frontend:next_page' %}">
                 <button class="btn btn-success" type="button"><i class="fas fa-plus"></i> Add Task</button>
               </a>
 
@@ -305,7 +305,7 @@
     .then(data => {
       const tableBody = document.getElementById("taskTable");
       tableBody.innerHTML = "";
-
+      
       data.forEach(task => {
         const row = `
           <tr>
@@ -313,7 +313,7 @@
             <td>${task.name}</td>
             <td>${task.desc}</td>
             <td>${task.priority}</td>
-            <td>${task.due}</td>
+            <td>${task.due_date}</td>
             <td>
                 <button class="btn btn-primary" onclick="window.location.href='/edit-task/${task.id}/'">
                     <i class="fas fa-edit"></i> Edit

@@ -4,8 +4,9 @@ from django.shortcuts import render, redirect
 from .forms import TaskForm
 from .models import Task
 from django.shortcuts import get_object_or_404
-
-
+from backend.utils import get_user_tasks
+from django.contrib import messages
+import requests
 
 # Create your views here.
 def index(request):
@@ -18,18 +19,34 @@ def task_list(request):
     return render(request, 'frontend/task_list.html')
 
 def get_tasks(request):
-    tasks = [
-        {'id': 1, 'name': 'Do laundry', 'desc': 'Wash clothes', 'priority': 'High', 'due': '2025-04-20'},
-        {'id': 2, 'name': 'Buy groceries', 'desc': 'Milk, eggs, bread', 'priority': 'Medium', 'due': '2025-04-18'},
-    ]
-    return JsonResponse(tasks, safe=False)  
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User not authenticated"}, status=401)
+
+    sort = request.GET.get('sort', None)
+    tasks = get_user_tasks(request.user, sort=sort)
+    serialized = [task.serialize() for task in tasks]
+
+    return JsonResponse(serialized, safe=False)
 
 def add_new_task_page(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('task_list')  
+            # Prepare data to send to backend
+            task_data = {
+                'name': form.cleaned_data['name'],
+                'desc': form.cleaned_data['desc'],
+                'priority': form.cleaned_data['priority'],
+                'due_date': form.cleaned_data['due_date'],  
+            }
+            # Send POST request to backend
+            response = requests.post('http://127.0.0.1:8000/api/create_task/', data=task_data, cookies=request.COOKIES)
+
+            if response.status_code == 201:
+                messages.success(request, "Task created!")
+                return redirect('frontend:task_list')
+            else:
+                messages.error(request, "Failed to create task.")
     else:
         form = TaskForm()
 
@@ -44,7 +61,7 @@ def edit_task(request, task_id):
         form = TaskForm(request.POST, instance=task)
         if form.is_valid():
             form.save()
-            return redirect('task_list')
+            return redirect('frontend/task_list')
     else:
         form = TaskForm(instance=task)
 
@@ -52,6 +69,5 @@ def edit_task(request, task_id):
 
 def login(request):
     return render(request, 'frontend/login.html')
-
 def register(request):
     return render(request, 'frontend/register.html')
